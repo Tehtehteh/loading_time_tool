@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Page loading scan tool results</title>
+</head>
+<body>
+    <h2>Hi, here are results:</h2>
+    {% for website in results %}
+        <p>Scan results for: <strong>{{website}}</strong></p>
+        <p>Geo: <strong>{{config[website]['geo']}}</strong></p>
+        <p>Scan number: <strong>{{config[website]['scans_number']}}</strong></p>
+        {% if isinstance(results[website]['position'], bool) %}
+        <p>The position of imonomy tag is <span style="color: green; font-weight: bold">OK</span></p>
+        {% else %}
+        <p>The position of imonomy tag is <span style="color: red; font-weight: bold">WRONG</span>{{results[website]['position'][1]}}</p>
+        {% end %}
+        {% if round(float(results[website]['average_with_tag'])/results[website]['average_without_tag'], 5) > thresholds['slowdown'] %}
+            <p>Imonomy tag slows down website by
+                <span style="color: red; font-weight: bold">
+                    <strong>
+                        {{round(float(results[website]['average_with_tag'])/results[website]['average_without_tag'], 5)*100}}%
+                    </strong>
+                </span>
+            </p>
+        {% else %}
+            <p>Imonomy tag doesn't slowdown website or slowdown is below threshold. Result is:
+                <span style="color: green;">
+                    <strong>
+                        {{round(float(results[website]['average_with_tag'])/results[website]['average_without_tag'], 5)*100}}%
+                    </strong>
+                </span>
+            </p>
+        {% end %}
+        <p>Results summary: </p>
+        <table border="1">
+             <tr>
+                <th>
+                    --
+                </th>
+                <th>
+                    Average (sec)
+                </th>
+                <th>
+                    Max (sec)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Without Imonomy tag
+                </td>
+                <td>
+                    {{ results[website]['average_without_tag'] }}
+                </td>
+                <td>
+                    {{ results[website]['max_without_tag'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    With Imonomy tag
+                </td>
+                <td>
+                    {{ results[website]['average_with_tag'] }}
+                </td>
+                <td>
+                    {{ results[website]['max_with_tag'] }}
+                </td>
+            </tr>
+        </table>
+        <table border="1">
+            <tr>
+                <th>
+                    --
+                </th>
+                <th>
+                    Average (sec)
+                </th>
+                <th>
+                    Max (sec)
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Preload
+                </td>
+                <td>
+                    {{ results[website]['average_preload'] }}
+                </td>
+                <td>
+                    {{ results[website]['max_preload'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Layer
+                </td>
+                <td>
+                    {{ results[website]['average_layer'] }}
+                </td>
+                <td>
+                    {{ results[website]['max_layer'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    990
+                </td>
+                <td>
+                    {{ results[website]['average_990'] }}
+                </td>
+                <td>
+                    {{ results[website]['max_990'] }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Provider response: {{ results[website]['max_unit'][0] }}
+                </td>
+                <td>
+                    {{ results[website]['average_unit'][1]}}
+                </td>
+                <td>
+                    {{ results[website]['max_unit'][1] }}
+                </td>
+            </tr>
+        </table>
+    {% end %}
+</body>
+</html>
